@@ -8,5 +8,6 @@ namespace PRS_GM.Data {
         }
         public DbSet<User> Users { get; set; } = default!;
         public DbSet<Vendor> Vendors { get; set; } = default!;
+        public DbSet<PRS_GM.Models.Product> Product { get; set; } = default!;
     }
 }
