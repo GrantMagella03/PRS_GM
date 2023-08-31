@@ -32,7 +32,7 @@ namespace PRS_GM.Controllers {
             }
             var requestLine = await _context.RequestLines.Include(x => x.Product)
                                                          .ThenInclude(x => x.Vendor)
-                                                         .Where(x => x.ProductID == id)
+                                                         .Where(x => x.ID == id)
                                                          .FirstOrDefaultAsync();
 
             if (requestLine == null) {

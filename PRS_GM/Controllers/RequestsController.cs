@@ -36,7 +36,7 @@ namespace PRS_GM.Controllers {
                                                  .Include(x => x.RequestLines)
                                                  .ThenInclude(x => x.Product)
                                                  .ThenInclude(x => x.Vendor)
-                                                 .Where(x => x.UserID == id)
+                                                 .Where(x => x.ID == id)
                                                  .FirstOrDefaultAsync();
 
             if (request == null) {
@@ -104,27 +104,27 @@ namespace PRS_GM.Controllers {
             return (_context.Requests?.Any(e => e.ID == id)).GetValueOrDefault();
         }
 
-        [HttpPut("review/{R}")]
-        public async Task<IActionResult> Review(Request R) {
+        [HttpPut("review/{id}")]
+        public async Task<IActionResult> Review(int id, Request R) {
             if (R.Total<=50) {
                 R.Status = "APPROVED";
-                return await PutRequest(R.ID, R);
+                return await PutRequest(id, R);
             }
             R.Status = "REVIEW"; 
-            return await PutRequest(R.ID, R);
+            return await PutRequest(id, R);
         }
 
-        [HttpPut("approve/{R}")]
-        public async Task<IActionResult> Approve(Request R) {
+        [HttpPut("approve/{id}")]
+        public async Task<IActionResult> Approve(int id, Request R) {
             R.Status = "APPROVED";
-            return await PutRequest(R.ID,R);
+            return await PutRequest(id, R);
         }
 
-        [HttpPut("reject/{R}")]
-        public async Task<IActionResult> Reject(Request R) {
+        [HttpPut("reject/{id}")]
+        public async Task<IActionResult> Reject(int id, Request R) {
             if (R.RejectionReason != null) {
             R.Status = "REJECTED";
-            return await PutRequest(R.ID, R);
+            return await PutRequest(id, R);
             }
             return BadRequest();
         }
