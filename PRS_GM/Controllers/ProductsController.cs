@@ -28,8 +28,8 @@ namespace PRS_GM.Controllers {
             if (_context.Products == null) {
                 return NotFound();
             }
-            var product = await _context.Products.Include(x => x.Vendor).Where(x => x.VendorID == id).FirstOrDefaultAsync();
-
+            var product = await _context.Products.Include(x => x.Vendor).Where(x => x.ID == id).FirstOrDefaultAsync();
+            
             if (product == null) {
                 return NotFound();
             }
