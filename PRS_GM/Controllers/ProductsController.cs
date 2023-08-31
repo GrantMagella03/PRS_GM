@@ -25,22 +25,22 @@ namespace PRS_GM.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProduct()
         {
-          if (_context.Product == null)
+          if (_context.Products == null)
           {
               return NotFound();
           }
-            return await _context.Product.Include(x=>x.Vendor).ToListAsync();
+            return await _context.Products.Include(x=>x.Vendor).ToListAsync();
         }
 
         // GET: api/Products/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-          if (_context.Product == null)
+          if (_context.Products == null)
           {
               return NotFound();
           }
-            var product = await _context.Product.Include(x=>x.Vendor).Where(x=>x.VendorID==id).FirstOrDefaultAsync();
+            var product = await _context.Products.Include(x=>x.Vendor).Where(x=>x.VendorID==id).FirstOrDefaultAsync();
 
             if (product == null)
             {
@@ -86,11 +86,11 @@ namespace PRS_GM.Controllers
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
-          if (_context.Product == null)
+          if (_context.Products == null)
           {
               return Problem("Entity set 'AppDbContext.Product'  is null.");
           }
-            _context.Product.Add(product);
+            _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetProduct", new { id = product.ID }, product);
@@ -100,17 +100,17 @@ namespace PRS_GM.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
-            if (_context.Product == null)
+            if (_context.Products == null)
             {
                 return NotFound();
             }
-            var product = await _context.Product.FindAsync(id);
+            var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
                 return NotFound();
             }
 
-            _context.Product.Remove(product);
+            _context.Products.Remove(product);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -118,7 +118,7 @@ namespace PRS_GM.Controllers
 
         private bool ProductExists(int id)
         {
-            return (_context.Product?.Any(e => e.ID == id)).GetValueOrDefault();
+            return (_context.Products?.Any(e => e.ID == id)).GetValueOrDefault();
         }
     }
 }

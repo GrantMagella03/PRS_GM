@@ -20,19 +20,19 @@ namespace PRS_GM.Controllers {
         // GET: api/Requests
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Request>>> GetRequest() {
-            if (_context.Request == null) {
+            if (_context.Requests == null) {
                 return NotFound();
             }
-            return await _context.Request.Include(x=>x.Users).ToListAsync();
+            return await _context.Requests.Include(x=>x.User).ToListAsync();
         }
 
         // GET: api/Requests/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Request>> GetRequest(int id) {
-            if (_context.Request == null) {
+            if (_context.Requests == null) {
                 return NotFound();
             }
-            var request = await _context.Request.Include(x => x.Users).Where(x => x.UserID == id).FirstOrDefaultAsync();
+            var request = await _context.Requests.Include(x => x.User).Where(x => x.UserID == id).FirstOrDefaultAsync();
 
             if (request == null) {
                 return NotFound();
@@ -69,10 +69,10 @@ namespace PRS_GM.Controllers {
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Request>> PostRequest(Request request) {
-            if (_context.Request == null) {
+            if (_context.Requests == null) {
                 return Problem("Entity set 'AppDbContext.Request'  is null.");
             }
-            _context.Request.Add(request);
+            _context.Requests.Add(request);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetRequest", new { id = request.ID }, request);
@@ -81,22 +81,22 @@ namespace PRS_GM.Controllers {
         // DELETE: api/Requests/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRequest(int id) {
-            if (_context.Request == null) {
+            if (_context.Requests == null) {
                 return NotFound();
             }
-            var request = await _context.Request.FindAsync(id);
+            var request = await _context.Requests.FindAsync(id);
             if (request == null) {
                 return NotFound();
             }
 
-            _context.Request.Remove(request);
+            _context.Requests.Remove(request);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
         private bool RequestExists(int id) {
-            return (_context.Request?.Any(e => e.ID == id)).GetValueOrDefault();
+            return (_context.Requests?.Any(e => e.ID == id)).GetValueOrDefault();
         }
         //iffy code starts here----------------------------------------------------------------------
         [HttpPut("review/{R}")]
@@ -123,10 +123,10 @@ namespace PRS_GM.Controllers {
         //"GetReviews" needs to be rechecked after login method is refined, and requestlines is added
         [HttpGet("reviews/{UID}")]
         public async Task<ActionResult<IEnumerable<Request>>> GetReviews(int UID) {
-            if (_context.Request == null) {
+            if (_context.Requests == null) {
                 return NotFound();
             }
-            var order = await _context.Request.Where(i=>i.Status == "REVIEW").Include(i => i.Users).Where(i => i.UserID != UID).ToListAsync();
+            var order = await _context.Requests.Where(i=>i.Status == "REVIEW").Include(i => i.User).Where(i => i.UserID != UID).ToListAsync();
 
             if (order == null) {
                 return NotFound();

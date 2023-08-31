@@ -11,6 +11,6 @@ namespace PRS_GM.Models {
         [StringLength(10)] public string Status { get; set; } = "NEW";
         [Column(TypeName = "Decimal(11,2)")] public decimal Total { get; set; } = 0;
         public int UserID { get; set; }
-        public virtual User? Users { get; set; }
+        public virtual User? User { get; set; }
     }
 }
