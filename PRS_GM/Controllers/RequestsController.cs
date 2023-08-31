@@ -13,17 +13,13 @@ namespace PRS_GM.Controllers {
             _context = context;
         }
 
-        private async Task RecalculateOrderTotal(int ID) {
-            //this method needs to be implemented after request line is added
-        }
-
         // GET: api/Requests
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Request>>> GetRequest() {
             if (_context.Requests == null) {
                 return NotFound();
             }
-            return await _context.Requests.Include(x=>x.User).ToListAsync();
+            return await _context.Requests.Include(x=>x.User).Include(x => x.RequestLines).ToListAsync();
         }
 
         // GET: api/Requests/5
@@ -32,7 +28,7 @@ namespace PRS_GM.Controllers {
             if (_context.Requests == null) {
                 return NotFound();
             }
-            var request = await _context.Requests.Include(x => x.User).Where(x => x.UserID == id).FirstOrDefaultAsync();
+            var request = await _context.Requests.Include(x => x.User).Include(x => x.RequestLines).Where(x => x.UserID == id).FirstOrDefaultAsync();
 
             if (request == null) {
                 return NotFound();
@@ -117,8 +113,11 @@ namespace PRS_GM.Controllers {
 
         [HttpPut("reject/{R}")]
         public async Task<IActionResult> Reject(Request R) {
+            if (R.RejectionReason != null) {
             R.Status = "REJECTED";
             return await PutRequest(R.ID, R);
+            }
+            return BadRequest();
         }
         //"GetReviews" needs to be rechecked after login method is refined, and requestlines is added
         [HttpGet("reviews/{UID}")]

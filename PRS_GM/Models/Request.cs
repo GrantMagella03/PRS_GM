@@ -12,5 +12,8 @@ namespace PRS_GM.Models {
         [Column(TypeName = "Decimal(11,2)")] public decimal Total { get; set; } = 0;
         public int UserID { get; set; }
         public virtual User? User { get; set; }
+
+        public virtual List<RequestLine>? RequestLines { get; set; }
+
     }
 }
