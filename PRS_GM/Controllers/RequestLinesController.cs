@@ -19,7 +19,9 @@ namespace PRS_GM.Controllers {
             if (_context.RequestLines == null) {
                 return NotFound();
             }
-            return await _context.RequestLines.ToListAsync();
+            return await _context.RequestLines.Include(x => x.Product)
+                                              .ThenInclude(x => x.Vendor)
+                                              .ToListAsync();
         }
 
         // GET: api/RequestLines/5
@@ -28,7 +30,10 @@ namespace PRS_GM.Controllers {
             if (_context.RequestLines == null) {
                 return NotFound();
             }
-            var requestLine = await _context.RequestLines.FindAsync(id);
+            var requestLine = await _context.RequestLines.Include(x => x.Product)
+                                                         .ThenInclude(x => x.Vendor)
+                                                         .Where(x => x.ProductID == id)
+                                                         .FirstOrDefaultAsync();
 
             if (requestLine == null) {
                 return NotFound();
@@ -49,6 +54,7 @@ namespace PRS_GM.Controllers {
 
             try {
                 await _context.SaveChangesAsync();
+                await RecalcReqTotal(requestLine.RequestID);
             }
             catch (DbUpdateConcurrencyException) {
                 if (!RequestLineExists(id)) {
@@ -70,6 +76,7 @@ namespace PRS_GM.Controllers {
             }
             _context.RequestLines.Add(requestLine);
             await _context.SaveChangesAsync();
+            await RecalcReqTotal(requestLine.RequestID);
 
             return CreatedAtAction("GetRequestLine", new { id = requestLine.ID }, requestLine);
         }
@@ -85,14 +92,26 @@ namespace PRS_GM.Controllers {
                 return NotFound();
             }
 
+            var IID = requestLine.RequestID;
             _context.RequestLines.Remove(requestLine);
             await _context.SaveChangesAsync();
+            await RecalcReqTotal(IID);
 
             return NoContent();
         }
 
         private bool RequestLineExists(int id) {
             return (_context.RequestLines?.Any(e => e.ID == id)).GetValueOrDefault();
+        }
+        private async Task RecalcReqTotal(int id) {
+            var total = (from r in _context.Requests
+                         join rl in _context.RequestLines on r.ID equals rl.RequestID
+                         join p in _context.Products on rl.ProductID equals p.ID
+                         where r.ID == id
+                         select new { Total = rl.Quantity * p.Price }).Sum(x => x.Total);
+            var order = await _context.Requests.FindAsync(id);
+            order!.Total = total;
+            await _context.SaveChangesAsync();
         }
     }
 }

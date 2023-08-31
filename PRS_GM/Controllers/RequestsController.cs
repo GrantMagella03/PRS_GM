@@ -19,7 +19,11 @@ namespace PRS_GM.Controllers {
             if (_context.Requests == null) {
                 return NotFound();
             }
-            return await _context.Requests.Include(x=>x.User).Include(x => x.RequestLines).ToListAsync();
+            return await _context.Requests.Include(x => x.User)
+                                          .Include(x => x.RequestLines)
+                                          .ThenInclude(x => x.Product)
+                                          .ThenInclude(x => x.Vendor)
+                                          .ToListAsync();
         }
 
         // GET: api/Requests/5
@@ -28,7 +32,12 @@ namespace PRS_GM.Controllers {
             if (_context.Requests == null) {
                 return NotFound();
             }
-            var request = await _context.Requests.Include(x => x.User).Include(x => x.RequestLines).Where(x => x.UserID == id).FirstOrDefaultAsync();
+            var request = await _context.Requests.Include(x => x.User)
+                                                 .Include(x => x.RequestLines)
+                                                 .ThenInclude(x => x.Product)
+                                                 .ThenInclude(x => x.Vendor)
+                                                 .Where(x => x.UserID == id)
+                                                 .FirstOrDefaultAsync();
 
             if (request == null) {
                 return NotFound();
@@ -94,7 +103,7 @@ namespace PRS_GM.Controllers {
         private bool RequestExists(int id) {
             return (_context.Requests?.Any(e => e.ID == id)).GetValueOrDefault();
         }
-        //iffy code starts here----------------------------------------------------------------------
+
         [HttpPut("review/{R}")]
         public async Task<IActionResult> Review(Request R) {
             if (R.Total<=50) {
@@ -119,7 +128,6 @@ namespace PRS_GM.Controllers {
             }
             return BadRequest();
         }
-        //"GetReviews" needs to be rechecked after login method is refined, and requestlines is added
         [HttpGet("reviews/{UID}")]
         public async Task<ActionResult<IEnumerable<Request>>> GetReviews(int UID) {
             if (_context.Requests == null) {
