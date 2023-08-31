@@ -19,7 +19,8 @@ namespace PRS_GM.Controllers {
             if (_context.Products == null) {
                 return NotFound();
             }
-            return await _context.Products.Include(x => x.Vendor).ToListAsync();
+            return await _context.Products.Include(x => x.Vendor)
+                                          .ToListAsync();
         }
 
         // GET: api/Products/5
@@ -28,7 +29,9 @@ namespace PRS_GM.Controllers {
             if (_context.Products == null) {
                 return NotFound();
             }
-            var product = await _context.Products.Include(x => x.Vendor).Where(x => x.ID == id).FirstOrDefaultAsync();
+            var product = await _context.Products.Include(x => x.Vendor)
+                                                 .Where(x => x.ID == id)
+                                                 .FirstOrDefaultAsync();
             
             if (product == null) {
                 return NotFound();
