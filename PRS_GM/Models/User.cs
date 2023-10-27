@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace PRS_GM.Models {
-    [Index("Username", IsUnique = true)]
+        [Index("Username", IsUnique = true)]
     public class User {
         [Key] public int ID { get; set; }
         [StringLength(30)] public string Username { get; set; }
