@@ -5,8 +5,16 @@ namespace PRS_GM {
     public class Program {
         public static void Main(string[] args) {
             var builder = WebApplication.CreateBuilder(args);
+
+            var connStrKey = "ProdDb";
+            #if DOCKER
+            var connStrKey = "DockerDb";
+            #elif DEBUG
+            connStrKey="DevDb";
+            #endif
+
             builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DevDb") ?? throw new InvalidOperationException("Connection string not found.")));
+                options.UseSqlServer(builder.Configuration.GetConnectionString(connStrKey) ?? throw new InvalidOperationException("Connection string not found.")));
 
 
             // Add services to the container.
