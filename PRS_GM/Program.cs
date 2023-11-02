@@ -25,7 +25,7 @@ namespace PRS_GM {
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());//in the future don't use this line, it's very unsecure || only allow the specific domain
 
             app.UseAuthorization();
 
